@@ -11,8 +11,14 @@ GraphNode::~GraphNode()
     //// STUDENT CODE
     ////
 
-    delete _chatBot; 
-
+    // delete _chatBot; // See explanation below
+    /* ----------- TASK 0: Explanation --------------
+     * Per the legacy student version of the code, the _chatBot destructor was getting called
+     * every time a GraphNode was deleted. However, we know there is only 1 instance _chatBot 
+     * which gets passed around from node to node. Therefore, it is incorrect to delete the 
+     * _chatBot instance inside the destructor for graphNode (i.e. line above). The correct 
+     * place is inside the chatLogic destructor (already there)
+     * ----------------------------------------------- */
     ////
     //// EOF STUDENT CODE
 }
