@@ -2,6 +2,7 @@
 #define CHATGUI_H_
 
 #include <wx/wx.h>
+#include <memory> // Task 1
 
 class ChatLogic; // forward declaration
 
@@ -16,7 +17,14 @@ private:
     //// STUDENT CODE
     ////
 
-    ChatLogic *_chatLogic;
+    //ChatLogic *_chatLogic; // Task 1 - explanation below 
+    std::unique_ptr<ChatLogic> _chatLogic; // Task 1 - explanation below
+    /* ----------- Task 1: Explanation --------------
+     * _chatLogic has been changed to a smart pointer. Earlier, _chatLogic was a raw pointer to the heap resource.
+     * Now, _chatLogic is a unique_ptr and recides on the stack. When _chatLogic goes out of scope, the destructor of
+     * _chatLogic is called which automatically deletes the heap resouce. Therefore, we can remove the manual deletion
+     * of the heap resouce currently being done in ChatBotPanelDialog destructor.
+     * ----------------------------------------------- */
 
     ////
     //// EOF STUDENT CODE
@@ -27,7 +35,12 @@ public:
     ~ChatBotPanelDialog();
 
     // getter / setter
-    ChatLogic *GetChatLogicHandle() { return _chatLogic; }
+    // ChatLogic *GetChatLogicHandle() { return _chatLogic; } // Task 1 - explanation below 
+    ChatLogic *GetChatLogicHandle() { return _chatLogc.get(); } // Task 1 - explanation below 
+    /* ----------- Task 1: Explanation --------------
+     * Per the prototype of GetChatLogicHandle() method. it returns the pointer to the ChatLogic object. 
+     * Originally, _chatLogic was a raw pointer. However, now _chatLogic is a smart pointer and hence we need
+     * to use the .get() method to be able to return the raw pointer of the  ChatLogic object. 
 
     // events
     void paintEvent(wxPaintEvent &evt);

@@ -6,6 +6,7 @@
 #include "chatlogic.h"
 #include "chatgui.h"
 
+
 // size of chatbot window
 const int width = 414;
 const int height = 736;
@@ -118,8 +119,17 @@ ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
     ////
 
     // create chat logic instance
-    _chatLogic = new ChatLogic(); 
-
+    //_chatLogic = new ChatLogic();  // Task 1 - explanation below 
+    _chatLogic = std::make_unique<ChatLogic> (); // Task 1 - explanation below 
+    /* ----------- Task 1: Explanation --------------
+     * Per the original student code, _chatLogic was the raw pointer to the heap resouce
+     * owned exclusively by the class ChatBotPanelDialog. In task 1, instead of manually allocating/deallocating 
+     * the heap resouse, we will use unique_ptr such that _chatLogic will now store the unique_ptr to the object 
+     * managing the heap resource. When _chatLogic goes out of scope, its desctror will be callled and will delete
+     * the heap resouce thereby automating the deletion. Originally, the deletion was this heap resource was being
+     * done in the destructor of ChatBotPanelDialog. 
+     * ----------------------------------------------- */
+    
     // pass pointer to chatbot dialog so answers can be displayed in GUI
     _chatLogic->SetPanelDialogHandle(this);
 
@@ -135,7 +145,13 @@ ChatBotPanelDialog::~ChatBotPanelDialog()
     //// STUDENT CODE
     ////
 
-    delete _chatLogic;
+    //delete _chatLogic; // Task 1 - explanation below 
+    /* ----------- Task 1: Explanation --------------
+     * Now, as we are using unique pointer for _chatLogic (which resides on the stack), we don't have to 
+     * worry about calling the delete for _chatLogic. It will automatically be deallocated when _chatLogic 
+     * goes out of scope.
+     * ----------------------------------------------- */
+
 
     ////
     //// EOF STUDENT CODE
