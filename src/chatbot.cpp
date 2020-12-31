@@ -42,8 +42,82 @@ ChatBot::~ChatBot()
     }
 }
 
-//// STUDENT CODE
+//// STUDENT CODE - Task 2 - Implemention of Rule of Five
 ////
+
+// Copy constructor - Deep copy
+ChatBot::ChatBot(const ChatBot& rhs)
+{
+    std::cout << "ChatBot Copy Constructor. Deep copying content of " << &rhs << " into " << this << std::endl;
+
+    // Copy the data handles
+    _currentNode = rhs._currentNode; 
+    _rootNode = rhs._rootNode;
+    _chatLogic = rhs._chatLogic;
+    
+    // Deep copy the owned data handle
+    _image = new wxBitmap(*rhs._image);
+}
+
+// Copy assignment operator - Deep copy
+ChatBot& ChatBot::operator=(const ChatBot& rhs)
+{
+    std::cout << "ChatBot Copy assignment operator. Deep copying content of " << &rhs << " into " << this << std::endl;
+
+    // Check for self assignment 
+    if (this == &rhs)
+    {
+        return *this;
+    }
+
+    // Copy the data handles
+    _currentNode = rhs._currentNode; 
+    _rootNode = rhs._rootNode;
+    _chatLogic = rhs._chatLogic;
+    
+    // Deep copy the owned data handle
+    _image = new wxBitmap(*rhs._image);
+
+    return *this;
+}
+
+// Move constructor - Transferring ownership of the owned data handle
+ChatBot::ChatBot(ChatBot&& rhs)
+{
+    std::cout << "ChatBot Move Constructor. Moving content of " << &rhs << " into " << this << std::endl;
+
+    // Copy the data handles
+    _currentNode = rhs._currentNode; 
+    _rootNode = rhs._rootNode;
+    _chatLogic = rhs._chatLogic;
+
+    // Move the owned data handle
+    _image = rhs._image;
+    rhs._image = NULL;
+}
+
+// Move assignment operator - Transferring ownership of the owned data handle
+ChatBot& ChatBot::operator=(ChatBot&& rhs)
+{
+    std::cout << "ChatBot Move assignment operator. Moving content of " << &rhs << " into " << this << std::endl;
+
+    // Check for self assignment 
+    if (this == &rhs)
+    {
+        return *this;
+    }
+
+    // Copy the data handles
+    _currentNode = rhs._currentNode; 
+    _rootNode = rhs._rootNode;
+    _chatLogic = rhs._chatLogic;
+
+    // Move the owned data handle
+    _image = rhs._image;
+    rhs._image = NULL;
+
+    return *this;
+}
 
 ////
 //// EOF STUDENT CODE

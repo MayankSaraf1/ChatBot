@@ -36,11 +36,12 @@ public:
 
     // getter / setter
     // ChatLogic *GetChatLogicHandle() { return _chatLogic; } // Task 1 - explanation below 
-    ChatLogic *GetChatLogicHandle() { return _chatLogc.get(); } // Task 1 - explanation below 
+    ChatLogic *GetChatLogicHandle() { return _chatLogic.get(); } // Task 1 - explanation below 
     /* ----------- Task 1: Explanation --------------
      * Per the prototype of GetChatLogicHandle() method. it returns the pointer to the ChatLogic object. 
      * Originally, _chatLogic was a raw pointer. However, now _chatLogic is a smart pointer and hence we need
      * to use the .get() method to be able to return the raw pointer of the  ChatLogic object. 
+     * ----------------------------------------------- */
 
     // events
     void paintEvent(wxPaintEvent &evt);

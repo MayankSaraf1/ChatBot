@@ -27,8 +27,12 @@ public:
     ChatBot(std::string filename); // constructor WITH memory allocation
     ~ChatBot();
 
-    //// STUDENT CODE
+    //// STUDENT CODE -- Task 2 - Function prototype of Rule of Five
     ////
+    ChatBot(const ChatBot& rhs); // Copy constructor
+    ChatBot& operator=(const ChatBot& rhs); // Copy assignment operator
+    ChatBot(ChatBot&& rhs); // Move constructor
+    ChatBot& operator=(ChatBot&& rhs); // Move assignment operator
 
     ////
     //// EOF STUDENT CODE
