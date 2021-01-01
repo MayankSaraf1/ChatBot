@@ -14,7 +14,7 @@
 
 ChatLogic::ChatLogic()
 {
-    //// STUDENT CODE
+    //// STUDENT CODE 
     ////
 
     // create instance of chatbot
@@ -28,19 +28,24 @@ ChatLogic::ChatLogic()
 }
 
 ChatLogic::~ChatLogic()
-{
-    //// STUDENT CODE
+{ 
+    //// STUDENT CODE - Task 3
     ////
 
     // delete chatbot instance
     delete _chatBot;
 
-    // delete all nodes
-    for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
-    {
-        delete *it;
-    }
-
+    //// delete all nodes
+    // for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
+    // {
+    //     delete *it; // typeid(*it).name() is Pint. Therefore, to get/delete the pointer to int we need to use *it. "it" contains some sort of vector iterator.
+    // }
+    /* --------------- Task 3 - Explanation ---------------------------------------
+     * As _nodes now contain a vector of unique_ptr pointers to GraphNode objects, 
+     * therefore, the deletion of the objects is automated and we don't need to manually 
+     * delete the nodes 
+     * -----------------------------------------------------------------------------*/
+    
     // delete all edges
     for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
     {
@@ -48,7 +53,7 @@ ChatLogic::~ChatLogic()
     }
 
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 3
 }
 
 template <typename T>
@@ -123,16 +128,40 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                     // node-based processing
                     if (type->second == "NODE")
                     {
-                        //// STUDENT CODE
+                        //// STUDENT CODE - Task 3
                         ////
 
                         // check if node with this ID exists already
-                        auto newNode = std::find_if(_nodes.begin(), _nodes.end(), [&id](GraphNode *node) { return node->GetID() == id; });
+                        // auto newNode = std::find_if(_nodes.begin(), _nodes.end(), [&id](GraphNode *node) { return node->GetID() == id; }); // Task 3 - explanation below
+
+                        auto id_match_fn = [&id](const std::unique_ptr<GraphNode> &node) { return node->GetID() == id; }; // Task 3 - explanation below
+                        /* --------------- Task 3 - Explanation ---------------------------------------
+                         * auto id_match_fn = [capture - local variable inside the function](argument to the function){ function body};
+                         * capture can be passed by reference as there is no real reason to pass it by value. We are anyway not modifying it inside the function.
+                         * Originally, the argument to the function was a raw GraphNode pointer as the _nodes was a vector of raw pointers.
+                         * Now, _nodes is a vector of unique_pointers, therefore, the function will accept the smart pointer as an argument.
+                         * As we don't want to transfer ownership of the smart pointer, we will pass it by reference. Also, as we don't want the lambda
+                         * to modify the smart pointer, we should mark it with a const qualifier. 
+                         * -----------------------------------------------------------------------------*/
+                        
+                        // check if node with this ID exists already
+                        std::vector<std::unique_ptr<GraphNode>>::iterator newNode = std::find_if(_nodes.begin(), _nodes.end(), id_match_fn);
+                        /* --------------- Task 3 - Explanation ---------------------------------------
+                        // http://www.cplusplus.com/reference/algorithm/find_if/                       
+                         * find_if : returns an iterator oject to the 1st element in the vector which satisfies the lamba function (argument 3).  
+                         * Earlier newNode was the iterator object to the raw pointer, now it is an iterator to the unique_ptr. 
+                         * To get the raw pointer we need to use the .get() method i.e newNode.get()
+                         * -----------------------------------------------------------------------------*/
 
                         // create new element if ID does not yet exist
                         if (newNode == _nodes.end())
                         {
-                            _nodes.emplace_back(new GraphNode(id));
+                            //_nodes.emplace_back(new GraphNode(id)); // Task 3 - explanation below
+                            _nodes.emplace_back(std::make_unique<GraphNode>(id)); // Task 3 - explanation below
+                            /* --------------- Task 3 - Explanation ---------------------------------------
+                             * Now _nodes contain a vector of unique_ptr of GraphNode objects on the heap
+                             * -----------------------------------------------------------------------------*/
+                            
                             newNode = _nodes.end() - 1; // get iterator to last element
 
                             // add all answers to current node
@@ -140,13 +169,13 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                         }
 
                         ////
-                        //// EOF STUDENT CODE
+                        //// EOF STUDENT CODE - Task 3
                     }
 
                     // edge-based processing
                     if (type->second == "EDGE")
                     {
-                        //// STUDENT CODE
+                        //// STUDENT CODE - Task 3
                         ////
 
                         // find tokens for incoming (parent) and outgoing (child) node
@@ -156,13 +185,30 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                         if (parentToken != tokens.end() && childToken != tokens.end())
                         {
                             // get iterator on incoming and outgoing node via ID search
-                            auto parentNode = std::find_if(_nodes.begin(), _nodes.end(), [&parentToken](GraphNode *node) { return node->GetID() == std::stoi(parentToken->second); });
-                            auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](GraphNode *node) { return node->GetID() == std::stoi(childToken->second); });
+                            // auto parentNode = std::find_if(_nodes.begin(), _nodes.end(), [&parentToken](GraphNode *node) { return node->GetID() == std::stoi(parentToken->second); }); // Task 3
+                            // auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](GraphNode *node) { return node->GetID() == std::stoi(childToken->second); }); // Task 3 
+                            
+                            // get iterator on incoming and outgoing node via ID search                           
+                            std::vector<std::unique_ptr<GraphNode>>::iterator  parentNode = std::find_if(_nodes.begin(), _nodes.end(), [&parentToken](std::unique_ptr<GraphNode> &node) { return node->GetID() == std::stoi(parentToken->second); }); //Task 3
+                            std::vector<std::unique_ptr<GraphNode>>::iterator  childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](std::unique_ptr<GraphNode> &node) { return node->GetID() == std::stoi(childToken->second); }); //Task 3
+                            // ------------------ Regarding dereferencing operator.----------------------
+                            // As smart pointers overload dereferencing operator, therefore node->GetID() and node.get()->GetID() are identical
+                            // Basically, we can access the member functions directly from the smart pointers and we don't need to get down to the raw pointer level
+                            // Originally, auto keyword was taking care of the type. I put an explicit type because they are both iterators objects
 
                             // create new edge
                             GraphEdge *edge = new GraphEdge(id);
-                            edge->SetChildNode(*childNode);
-                            edge->SetParentNode(*parentNode);
+
+                            // edge->SetChildNode(*childNode); // Task 3 
+                            // edge->SetParentNode(*parentNode); // Task 3
+
+                            edge->SetChildNode((*childNode).get()); // Task 3 - Explanation below 
+                            edge->SetParentNode((*parentNode).get()); // Task 3 - Explanation below 
+                            /* ------------------Regarding parentNode and childNode ------------------------------------
+                             * To access the smart pointer, we need to dereference like so. (*parentNode)
+                             * To access the raw pointer, we need to call the .get() method on the smart pointer.. like so. (*parentNode).get()
+                             * ------------------------------------------------------------------------------------------ */
+
                             _edges.push_back(edge);
 
                             // find all keywords for current node
@@ -193,7 +239,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         return;
     }
 
-    //// STUDENT CODE
+    //// STUDENT CODE  - Task 3
     ////
 
     // identify root node
@@ -201,12 +247,13 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
     {
         // search for nodes which have no incoming edges
-        if ((*it)->GetNumberOfParents() == 0)
+        if ((*it)->GetNumberOfParents() == 0) // We can access member functions with smart pointers as well.
         {
 
             if (rootNode == nullptr)
             {
-                rootNode = *it; // assign current node to root
+                // rootNode = *it; // assign current node to root // Task 3
+                rootNode = it->get(); // assign current node to root // Task 3 - rootNode is a raw pointer and hence we need to use the .get() method
             }
             else
             {
@@ -220,7 +267,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     rootNode->MoveChatbotHere(_chatBot);
     
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 3
 }
 
 void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog)

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "chatgui.h"
+#include <memory> // Task 3
 
 // forward declarations
 class ChatBot;
@@ -13,15 +14,21 @@ class GraphNode;
 class ChatLogic
 {
 private:
-    //// STUDENT CODE
+    //// STUDENT CODE - Task 3
     ////
 
     // data handles (owned)
-    std::vector<GraphNode *> _nodes;
+    // std::vector<GraphNode *> _nodes; // Task 3 - explanation below
+    std::vector<std::unique_ptr<GraphNode>> _nodes; // Task 3 - explanation below
+    /* --------------- Task 3 - Explanation ---------------------------------------
+     * _nodes now contain a vector of unique_ptr pointers. 
+     * This allows us not manage/delete objects of GraphNode class on the heap
+     * -----------------------------------------------------------------------------*/
+
     std::vector<GraphEdge *> _edges;
 
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 3
 
     // data handles (not owned)
     GraphNode *_currentNode;
