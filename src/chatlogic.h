@@ -14,21 +14,25 @@ class GraphNode;
 class ChatLogic
 {
 private:
-    //// STUDENT CODE - Task 3
+    //// STUDENT CODE - Task 3 and 4
     ////
 
     // data handles (owned)
     // std::vector<GraphNode *> _nodes; // Task 3 - explanation below
     std::vector<std::unique_ptr<GraphNode>> _nodes; // Task 3 - explanation below
     /* --------------- Task 3 - Explanation ---------------------------------------
-     * _nodes now contain a vector of unique_ptr pointers. 
-     * This allows us not manage/delete objects of GraphNode class on the heap
+     * _nodes now contain a vector of unique_ptr and not raw pointers.
+     * This allows us not manually delete objects of GraphNode class on the heap
      * -----------------------------------------------------------------------------*/
 
-    std::vector<GraphEdge *> _edges;
+    // std::vector<GraphEdge *> _edges; // Task 4 
+    /* --------------- Task 4 - Explanation ---------------------------------------
+     * ChatLogic doesn't manage the vector of GraphNodes anymore. 
+     * Now, the parent nodes (in GraphNode) manage the child edges (_childEdges) connected to it.
+     * -----------------------------------------------------------------------------*/
 
     ////
-    //// EOF STUDENT CODE - Task 3
+    //// EOF STUDENT CODE - Task 3 and 4
 
     // data handles (not owned)
     GraphNode *_currentNode;

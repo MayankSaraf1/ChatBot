@@ -8,7 +8,7 @@ GraphNode::GraphNode(int id)
 
 GraphNode::~GraphNode()
 {
-    //// STUDENT CODE
+    //// STUDENT CODE - Task 0
     ////
 
     // delete _chatBot; // See explanation below
@@ -20,7 +20,7 @@ GraphNode::~GraphNode()
      * place is inside the chatLogic destructor (already there)
      * ----------------------------------------------- */
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 0
 }
 
 void GraphNode::AddToken(std::string token)
@@ -29,13 +29,18 @@ void GraphNode::AddToken(std::string token)
 }
 
 void GraphNode::AddEdgeToParentNode(GraphEdge *edge)
+// void GraphNode::AddEdgeToParentNode(std::unique_ptr<GraphEdge> edge)
 {
     _parentEdges.push_back(edge);
 }
 
-void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
+// void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
+void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge)
 {
-    _childEdges.push_back(edge);
+    _childEdges.push_back(std::move(edge)); // Task 4
+    /* ----------- TASK 4: Explanation --------------
+     * We have to use std::move to ensure the ownership of the "edge" unique_ptr is transferred to the _childEdges vector and not copied
+     * ----------------------------------------------- */
 }
 
 //// STUDENT CODE
@@ -56,11 +61,15 @@ void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
 
 GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
 {
-    //// STUDENT CODE
+    //// STUDENT CODE - Task 4
     ////
 
-    return _childEdges[index];
+    // return _childEdges[index]; // Task 4
+    return _childEdges[index].get(); // Task 4
+    /* ----------- TASK 4: Explanation --------------
+     * As _childEdges is a vector of unique_ptr, we need to use the .get() method to return the raw GraphEdge pointer
+     * ----------------------------------------------- */
 
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 4
 }

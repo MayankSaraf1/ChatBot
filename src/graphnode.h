@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <memory> // Task 4
 #include "chatbot.h"
-
 
 // forward declarations
 class GraphEdge;
@@ -12,11 +12,17 @@ class GraphEdge;
 class GraphNode
 {
 private:
-    //// STUDENT CODE
+    //// STUDENT CODE - Task 4
     ////
 
     // data handles (owned)
-    std::vector<GraphEdge *> _childEdges;  // edges to subsequent nodes
+    // std::vector<GraphEdge *> _childEdges;  // edges to subsequent nodes // Task 4
+    std::vector<std::unique_ptr<GraphEdge>> _childEdges;  // edges to subsequent nodes // Task 4 - explanation below
+    
+    /* --------------- Task 4 - Explanation ---------------------------------------
+     * The parent node owns the vector of child edges. As the ownership is exclusive, 
+     * we should use unique_ptr 
+     * ----------------------------------------------------------------------------*/
 
     // data handles (not owned)
     std::vector<GraphEdge *> _parentEdges; // edges to preceding nodes 
@@ -44,7 +50,8 @@ public:
     // proprietary functions
     void AddToken(std::string token); // add answers to list
     void AddEdgeToParentNode(GraphEdge *edge);
-    void AddEdgeToChildNode(GraphEdge *edge);
+    // void AddEdgeToChildNode(GraphEdge *edge); // Task 4
+    void AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge); // Task 4
 
     //// STUDENT CODE
     ////
