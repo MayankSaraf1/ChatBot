@@ -29,7 +29,7 @@ ChatLogic::ChatLogic()
 
 ChatLogic::~ChatLogic()
 { 
-    //// STUDENT CODE - Task 3
+    //// STUDENT CODE - Task 3 and Task 4
     ////
 
     // delete chatbot instance
@@ -46,14 +46,17 @@ ChatLogic::~ChatLogic()
      * delete the nodes 
      * -----------------------------------------------------------------------------*/
     
-    // delete all edges
-    for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
-    {
-        delete *it;
-    }
+    // // delete all edges
+    // for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
+    // {
+    //     delete *it;
+    // }
+    /* --------------- Task 4 - Explanation ---------------------------------------
+     * As ChatLogic class doesn't own _edges vector, we don't have to worry about deleting the edges
+     * ----------------------------------------------------------------------------*/
 
     ////
-    //// EOF STUDENT CODE - Task 3
+    //// EOF STUDENT CODE - Task 3 and Task 4
 }
 
 template <typename T>
@@ -196,8 +199,9 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                             // Basically, we can access the member functions directly from the smart pointers and we don't need to get down to the raw pointer level
                             // Originally, auto keyword was taking care of the type. I put an explicit type because they are both iterators objects
 
-                            // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
+                            // create new edge 
+                            // GraphEdge *edge = new GraphEdge(id); // Task 4 - edge should be a unique_ptr
+                            std::unique_ptr<GraphEdge> edge = std::make_unique<GraphEdge>(id); // Task 4
 
                             // edge->SetChildNode(*childNode); // Task 3 
                             // edge->SetParentNode(*parentNode); // Task 3
@@ -209,14 +213,29 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                              * To access the raw pointer, we need to call the .get() method on the smart pointer.. like so. (*parentNode).get()
                              * ------------------------------------------------------------------------------------------ */
 
-                            _edges.push_back(edge);
+                            // _edges.push_back(edge); // Task 4
+                            // ChatLogic doesn't manage the vector of GraphEdges anymore and have gotten rid of _edges vector from ChatLogic
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge);
-                            (*parentNode)->AddEdgeToChildNode(edge);
+                            // (*childNode)->AddEdgeToParentNode(edge); // Task 4
+                            // (*parentNode)->AddEdgeToChildNode(edge); // Task 4
+
+                            // store reference in child node and parent node
+                            (*childNode)->AddEdgeToParentNode(edge.get()); // Task 4
+                            /* --------------- Task 4 - Explanation ---------------------------------------
+                             * As childNode doesn't own the edge, it stores the raw pointer of the edge. We use .get() to get the raw pointer
+                             * (*childNode) gets the smart pointer from the iterator object. Then we can directly access the GraphNode member function.
+                             * -----------------------------------------------------------------------------*/
+                            (*parentNode)->AddEdgeToChildNode(std::move(edge)); // Task 4
+                            /* --------------- Task 4 - Explanation ---------------------------------------
+                             * parentNode owns the edge(s) connected to it. 
+                             * As edge is unique_ptr, we need to transfer ownership by using the std::move on the "edge" unique_ptr
+                             * as we add this edge to the parent node
+                             * -----------------------------------------------------------------------------*/
+                            
                         }
 
                         ////
