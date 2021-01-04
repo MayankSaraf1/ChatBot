@@ -291,15 +291,20 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     
     // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
     // _chatBot->SetChatLogicHandle(this); // Task 5
-    MoveableChatBotObject.SetChatLogicHandle(this); // Task 5 - This is needed to ensure ChatBot can reach ChatLogic object
-    this->SetChatbotHandle(&MoveableChatBotObject); // Task 5 - This is needed to ensure ChatLogic can reach ChatBot object.
+
+    // Set the _chatLogic handle in ChatBot. This is how ChatBot can send the response back to GUI
+    MoveableChatBotObject.SetChatLogicHandle(this); // Task 5
+
+    // Set the Chatbot handle in the _chatLogic. This is how ChatLogic can send the user messages to the ChatBot
+    this->SetChatbotHandle(&MoveableChatBotObject); // Task 5
 
     // add chatbot to graph root node
     // _chatBot->SetRootNode(rootNode); // Task 5
     // rootNode->MoveChatbotHere(_chatBot); // Task 5
 
-    // add chatbot to graph root node
+    // Set the root node in ChatBot
     MoveableChatBotObject.SetRootNode(rootNode); // Task 5
+    // Move the Chatbot to the root node
     rootNode->MoveChatbotHere(std::move(MoveableChatBotObject)); // Task 5
     /* --------------- Task 5 - Explanation ---------------------------------------
      * MoveableChatBotObject is a l-value and its scope is limited to LoadAnswerGraphFromFile() method.

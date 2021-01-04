@@ -51,8 +51,7 @@ void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge)
 //     _chatBot->SetCurrentNode(this);
 // }
 
-// MoveChatbotHere() method has been modifed to accept a r-value reference. Now, MoveableChatBotObject exists as a l-value in the scope of MoveChatbotHere() method
-void GraphNode::MoveChatbotHere(ChatBot&& MoveableChatBotObject) // Task 5
+void GraphNode::MoveChatbotHere(ChatBot MoveableChatBotObject) // Task 5
 {
     _chatBotObject = std::move(MoveableChatBotObject); // MoveableChatBotObject is moved to the current node. 
     _chatBotObject.SetCurrentNode(this); // Set the current node handle in _chatBotObject as well. 

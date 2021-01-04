@@ -63,7 +63,7 @@ public:
     ////
 
     // void MoveChatbotHere(ChatBot *chatbot); // Task 5
-    void MoveChatbotHere(ChatBot&& MoveableChatBotObject); // Task 5
+    void MoveChatbotHere(ChatBot MoveableChatBotObject); // Task 5
 
     ////
     //// EOF STUDENT CODE - Task 5

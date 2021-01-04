@@ -11,8 +11,6 @@
 // constructor WITHOUT memory allocation
 ChatBot::ChatBot()
 {
-    std::cout << "ChatBot Constructor WITHOUT memory allocation" << std::endl;
-
     // invalidate data handles
     _image = nullptr;
     _chatLogic = nullptr;
@@ -22,7 +20,7 @@ ChatBot::ChatBot()
 // constructor WITH memory allocation
 ChatBot::ChatBot(std::string filename)
 {
-    std::cout << "ChatBot Constructor WITH memory allocation" << std::endl;
+    std::cout << "ChatBot Constructor" << std::endl;
     
     // invalidate data handles
     _chatLogic = nullptr;
@@ -50,21 +48,20 @@ ChatBot::~ChatBot()
 // Copy constructor - Deep copy
 ChatBot::ChatBot(const ChatBot& rhs)
 {
-    std::cout << "ChatBot Copy Constructor. Deep copy data + heap content (pointed by handle) of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Copy Constructor"<<std::endl;
 
     // Copy the data handles
-    _currentNode = rhs._currentNode; 
     _rootNode = rhs._rootNode;
     _chatLogic = rhs._chatLogic;
     
-    // Deep copy the content of the data handle
+    // Deep copy the heap content
     _image = new wxBitmap(*rhs._image);
 }
 
 // Copy assignment operator - Deep copy
 ChatBot& ChatBot::operator=(const ChatBot& rhs)
 {
-    std::cout << "ChatBot Copy assignment operator. Deep copy data + heap content (pointed by handle) of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Copy assignment operator" << std::endl;
 
     // Check for self assignment 
     if (this == &rhs)
@@ -73,20 +70,19 @@ ChatBot& ChatBot::operator=(const ChatBot& rhs)
     }
 
     // Copy the data handles
-    _currentNode = rhs._currentNode; 
     _rootNode = rhs._rootNode;
     _chatLogic = rhs._chatLogic;
     
-    // Deep copy the content of the data handle
+    // Deep copy the heap content
     _image = new wxBitmap(*rhs._image);
 
     return *this;
 }
 
-// Move constructor - Transferring ownership of the owned data handle for the "image" on the heap
+// Move constructor
 ChatBot::ChatBot(ChatBot&& rhs)
 {
-    std::cout << "ChatBot Move Constructor. Moving the handle of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Move Constructor" << std::endl;
 
     // Copy the data handles
     // _currentNode member of ChatBot object is updated by the current node itself, we don't need to worry about it here
@@ -97,12 +93,14 @@ ChatBot::ChatBot(ChatBot&& rhs)
     // Move the owned data handle (transfer ownership not copy heap content)
     _image = rhs._image;
     rhs._image = NULL;
+    rhs._rootNode = nullptr;
+    rhs._chatLogic = nullptr;
 }
 
-// Move assignment operator - Transferring ownership of the owned data handle of the "image" on the heap
+// Move assignment operator
 ChatBot& ChatBot::operator=(ChatBot&& rhs)
 {
-    std::cout << "ChatBot Move assignment operator. Moving the handle of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Move assignment operator" << std::endl;
 
     // Check for self assignment 
     if (this == &rhs)
@@ -119,6 +117,8 @@ ChatBot& ChatBot::operator=(ChatBot&& rhs)
     // Move the owned data handle (transfer ownership not copy heap content)
     _image = rhs._image;
     rhs._image = NULL;
+    rhs._rootNode = nullptr;
+    rhs._chatLogic = nullptr;
 
     return *this;
 }
