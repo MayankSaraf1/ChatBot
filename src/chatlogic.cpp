@@ -14,26 +14,31 @@
 
 ChatLogic::ChatLogic()
 {
-    //// STUDENT CODE 
+    //// STUDENT CODE - Task 5
     ////
 
     // create instance of chatbot
-    _chatBot = new ChatBot("../images/chatbot.png");
-
+    // _chatBot = new ChatBot("../images/chatbot.png"); // Task 5
+    
     // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
-    _chatBot->SetChatLogicHandle(this);
+    // _chatBot->SetChatLogicHandle(this); // Task 5
+
+    /* --------------- Task 5 - Explanation ---------------------------------------
+     * As a part of Task 5, the ChatBot instance will not be created on the heap, 
+     * rather, it will be created on the stack in the LoadAnswerGraphFromFile method.
+     * -----------------------------------------------------------------------------*/
 
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 5
 }
 
 ChatLogic::~ChatLogic()
 { 
-    //// STUDENT CODE - Task 3 and Task 4
+    //// STUDENT CODE - Task 3, 4 and 5
     ////
 
-    // delete chatbot instance
-    delete _chatBot;
+    // delete chatbot instance 
+    // delete _chatBot; // Task 5
 
     //// delete all nodes
     // for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
@@ -56,7 +61,7 @@ ChatLogic::~ChatLogic()
      * ----------------------------------------------------------------------------*/
 
     ////
-    //// EOF STUDENT CODE - Task 3 and Task 4
+    //// EOF STUDENT CODE - Task 3, 4 and 5
 }
 
 template <typename T>
@@ -258,7 +263,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         return;
     }
 
-    //// STUDENT CODE  - Task 3
+    //// STUDENT CODE  - Task 3 and 5
     ////
 
     // identify root node
@@ -281,12 +286,29 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
         }
     }
 
+    // create instance of chatbot (on the stack).
+    ChatBot MoveableChatBotObject("../images/chatbot.png"); // Task 5
+    
+    // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
+    // _chatBot->SetChatLogicHandle(this); // Task 5
+    MoveableChatBotObject.SetChatLogicHandle(this); // Task 5 - This is needed to ensure ChatBot can reach ChatLogic object
+    this->SetChatbotHandle(&MoveableChatBotObject); // Task 5 - This is needed to ensure ChatLogic can reach ChatBot object.
+
     // add chatbot to graph root node
-    _chatBot->SetRootNode(rootNode);
-    rootNode->MoveChatbotHere(_chatBot);
+    // _chatBot->SetRootNode(rootNode); // Task 5
+    // rootNode->MoveChatbotHere(_chatBot); // Task 5
+
+    // add chatbot to graph root node
+    MoveableChatBotObject.SetRootNode(rootNode); // Task 5
+    rootNode->MoveChatbotHere(std::move(MoveableChatBotObject)); // Task 5
+    /* --------------- Task 5 - Explanation ---------------------------------------
+     * MoveableChatBotObject is a l-value and its scope is limited to LoadAnswerGraphFromFile() method.
+     * When we call std::move on MoveableChatBotObject, we convert it to an r-value. In the next line on caller side, MoveableChatBotObject will cease to exist once it has been converted to a r-value
+     * MoveChatbotHere() method, accepts a r-value referece. Essentially, inside MoveChatbotHere() method, MoveableChatBotObject will exisit as a l-value and will continue to exist in its scope.
+     * -----------------------------------------------------------------------------*/
     
     ////
-    //// EOF STUDENT CODE - Task 3
+    //// EOF STUDENT CODE - Task 3 and 5
 }
 
 void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog)

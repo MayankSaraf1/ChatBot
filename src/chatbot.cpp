@@ -11,6 +11,8 @@
 // constructor WITHOUT memory allocation
 ChatBot::ChatBot()
 {
+    std::cout << "ChatBot Constructor WITHOUT memory allocation" << std::endl;
+
     // invalidate data handles
     _image = nullptr;
     _chatLogic = nullptr;
@@ -20,7 +22,7 @@ ChatBot::ChatBot()
 // constructor WITH memory allocation
 ChatBot::ChatBot(std::string filename)
 {
-    std::cout << "ChatBot Constructor" << std::endl;
+    std::cout << "ChatBot Constructor WITH memory allocation" << std::endl;
     
     // invalidate data handles
     _chatLogic = nullptr;
@@ -42,27 +44,27 @@ ChatBot::~ChatBot()
     }
 }
 
-//// STUDENT CODE - Task 2 - Implemention of Rule of Five
+//// STUDENT CODE - Task 2 Rule of Five implementation
 ////
 
 // Copy constructor - Deep copy
 ChatBot::ChatBot(const ChatBot& rhs)
 {
-    std::cout << "ChatBot Copy Constructor. Deep copying content of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Copy Constructor. Deep copy data + heap content (pointed by handle) of " << &rhs << " into " << this << std::endl;
 
     // Copy the data handles
     _currentNode = rhs._currentNode; 
     _rootNode = rhs._rootNode;
     _chatLogic = rhs._chatLogic;
     
-    // Deep copy the owned data handle
+    // Deep copy the content of the data handle
     _image = new wxBitmap(*rhs._image);
 }
 
 // Copy assignment operator - Deep copy
 ChatBot& ChatBot::operator=(const ChatBot& rhs)
 {
-    std::cout << "ChatBot Copy assignment operator. Deep copying content of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Copy assignment operator. Deep copy data + heap content (pointed by handle) of " << &rhs << " into " << this << std::endl;
 
     // Check for self assignment 
     if (this == &rhs)
@@ -75,31 +77,32 @@ ChatBot& ChatBot::operator=(const ChatBot& rhs)
     _rootNode = rhs._rootNode;
     _chatLogic = rhs._chatLogic;
     
-    // Deep copy the owned data handle
+    // Deep copy the content of the data handle
     _image = new wxBitmap(*rhs._image);
 
     return *this;
 }
 
-// Move constructor - Transferring ownership of the owned data handle
+// Move constructor - Transferring ownership of the owned data handle for the "image" on the heap
 ChatBot::ChatBot(ChatBot&& rhs)
 {
-    std::cout << "ChatBot Move Constructor. Moving content of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Move Constructor. Moving the handle of " << &rhs << " into " << this << std::endl;
 
     // Copy the data handles
-    _currentNode = rhs._currentNode; 
+    // _currentNode member of ChatBot object is updated by the current node itself, we don't need to worry about it here
     _rootNode = rhs._rootNode;
     _chatLogic = rhs._chatLogic;
-
-    // Move the owned data handle
+    _chatLogic->SetChatbotHandle(this); // This is important because _chatLogic also needs to be updated with the new _chatBot handle else _chatLogic will try to access the stale _chatBot handle.
+    
+    // Move the owned data handle (transfer ownership not copy heap content)
     _image = rhs._image;
     rhs._image = NULL;
 }
 
-// Move assignment operator - Transferring ownership of the owned data handle
+// Move assignment operator - Transferring ownership of the owned data handle of the "image" on the heap
 ChatBot& ChatBot::operator=(ChatBot&& rhs)
 {
-    std::cout << "ChatBot Move assignment operator. Moving content of " << &rhs << " into " << this << std::endl;
+    std::cout << "ChatBot Move assignment operator. Moving the handle of " << &rhs << " into " << this << std::endl;
 
     // Check for self assignment 
     if (this == &rhs)
@@ -108,11 +111,12 @@ ChatBot& ChatBot::operator=(ChatBot&& rhs)
     }
 
     // Copy the data handles
-    _currentNode = rhs._currentNode; 
+    // _currentNode member of ChatBot object is updated by the current node itself, we don't need to worry about it here
     _rootNode = rhs._rootNode;
     _chatLogic = rhs._chatLogic;
+    _chatLogic->SetChatbotHandle(this); // This is important because _chatLogic also needs to be updated with the new _chatBot handle else _chatLogic will try to access the stale _chatBot handle.
 
-    // Move the owned data handle
+    // Move the owned data handle (transfer ownership not copy heap content)
     _image = rhs._image;
     rhs._image = NULL;
 
@@ -120,7 +124,7 @@ ChatBot& ChatBot::operator=(ChatBot&& rhs)
 }
 
 ////
-//// EOF STUDENT CODE
+//// EOF STUDENT CODE - Task 2 Rule of Five implementation
 
 void ChatBot::ReceiveMessageFromUser(std::string message)
 {

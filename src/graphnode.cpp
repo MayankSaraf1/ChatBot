@@ -43,21 +43,29 @@ void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge)
      * ----------------------------------------------- */
 }
 
-//// STUDENT CODE
+//// STUDENT CODE - Task 5: Moving the ChatBot
 ////
-void GraphNode::MoveChatbotHere(ChatBot *chatbot)
+// void GraphNode::MoveChatbotHere(ChatBot *chatbot) // Task 5
+// {
+//     _chatBot = chatbot;
+//     _chatBot->SetCurrentNode(this);
+// }
+
+// MoveChatbotHere() method has been modifed to accept a r-value reference. Now, MoveableChatBotObject exists as a l-value in the scope of MoveChatbotHere() method
+void GraphNode::MoveChatbotHere(ChatBot&& MoveableChatBotObject) // Task 5
 {
-    _chatBot = chatbot;
-    _chatBot->SetCurrentNode(this);
+    _chatBotObject = std::move(MoveableChatBotObject); // MoveableChatBotObject is moved to the current node. 
+    _chatBotObject.SetCurrentNode(this); // Set the current node handle in _chatBotObject as well. 
 }
 
 void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
 {
-    newNode->MoveChatbotHere(_chatBot);
-    _chatBot = nullptr; // invalidate pointer at source
+    // newNode->MoveChatbotHere(_chatBot); // Task 5
+    newNode->MoveChatbotHere(std::move(_chatBotObject)); // Task 5
+    // _chatBot = nullptr; // invalidate pointer at source // Task 5
 }
 ////
-//// EOF STUDENT CODE
+//// EOF STUDENT CODE - Task 5: Moving the ChatBot
 
 GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
 {

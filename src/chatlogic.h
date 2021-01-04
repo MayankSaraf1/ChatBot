@@ -35,7 +35,7 @@ private:
     //// EOF STUDENT CODE - Task 3 and 4
 
     // data handles (not owned)
-    GraphNode *_currentNode;
+    // GraphNode *_currentNode; // The handle to current node is not needed inside the ChatLogic object
     ChatBot *_chatBot;
     ChatBotPanelDialog *_panelDialog;
 

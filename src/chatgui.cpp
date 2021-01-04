@@ -142,7 +142,7 @@ ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
 
 ChatBotPanelDialog::~ChatBotPanelDialog()
 {
-    //// STUDENT CODE
+    //// STUDENT CODE - Task 1
     ////
 
     //delete _chatLogic; // Task 1 - explanation below 
@@ -154,7 +154,7 @@ ChatBotPanelDialog::~ChatBotPanelDialog()
 
 
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 1
 }
 
 void ChatBotPanelDialog::AddDialogItem(wxString text, bool isFromUser)

@@ -12,7 +12,7 @@ class GraphEdge;
 class GraphNode
 {
 private:
-    //// STUDENT CODE - Task 4
+    //// STUDENT CODE - Task 4 and 5
     ////
 
     // data handles (owned)
@@ -26,7 +26,13 @@ private:
 
     // data handles (not owned)
     std::vector<GraphEdge *> _parentEdges; // edges to preceding nodes 
-    ChatBot *_chatBot;
+    
+    // ChatBot *_chatBot; // Task 5
+    ChatBot _chatBotObject; // Task 5 
+    /* --------------- Task 5 - Explanation ---------------------------------------
+     * Originally ChatBot object was managed by ChatLogic on the heap. Now, ChatBot object is contained inside GraphNode object. The handles inside the Chatbot object is moved from node to node
+     * Each GraphNode object will instantiate an object of the ChatBot class. Default constructor WITHOUT memory allocation will get invoked for each node.
+     * ----------------------------------------------------------------------------*/
 
     ////
     //// EOF STUDENT CODE
@@ -53,13 +59,14 @@ public:
     // void AddEdgeToChildNode(GraphEdge *edge); // Task 4
     void AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge); // Task 4
 
-    //// STUDENT CODE
+    //// STUDENT CODE - Task 5
     ////
 
-    void MoveChatbotHere(ChatBot *chatbot);
+    // void MoveChatbotHere(ChatBot *chatbot); // Task 5
+    void MoveChatbotHere(ChatBot&& MoveableChatBotObject); // Task 5
 
     ////
-    //// EOF STUDENT CODE
+    //// EOF STUDENT CODE - Task 5
 
     void MoveChatbotToNewNode(GraphNode *newNode);
 };
